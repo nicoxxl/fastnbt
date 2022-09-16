@@ -69,3 +69,11 @@ where
     /// provide this so that callers can efficiently find regions to process.
     fn list(&self) -> LoaderResult<Vec<(RCoord, RCoord)>>;
 }
+
+/// Allow to create regions
+pub trait RegionCreator<S>: RegionLoader<S>
+where
+    S: Seek + Read + Write,
+{
+    fn create(&self, x: RCoord, z: RCoord) -> LoaderResult<Region<S>>;
+}

@@ -1,4 +1,4 @@
-use crate::{JavaChunk, LoaderError};
+use crate::{JavaChunk, LoaderError, RegionCreator};
 use crate::{LoaderResult, Region};
 use crate::{RCoord, RegionLoader};
 use std::fs::File;
@@ -58,6 +58,15 @@ impl RegionLoader<File> for RegionFileLoader {
             .collect();
 
         Ok(paths)
+    }
+}
+
+impl RegionCreator<File> for RegionFileLoader {
+    fn create(&self, x: RCoord, z: RCoord) -> LoaderResult<Region<File>> {
+        let path = self.region_dir.join(format!("r.{}.{}.mca", x.0, z.0));
+        let file = File::create(path).map_err(|e| LoaderError(e.to_string()))?;
+        let region = Region::new(file).map_err(|e| LoaderError(e.to_string()))?;
+        return Ok(region);
     }
 }
 
